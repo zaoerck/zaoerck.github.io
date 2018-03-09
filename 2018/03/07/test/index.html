@@ -7,7 +7,7 @@
 
 <html class="theme-next pisces use-motion" lang="zh-CN">
 <head>
-  <meta charset="UTF-8"/>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <meta name="theme-color" content="#222">
@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="我的博客">
 <meta property="og:description" content="初识神经网络 《神经网络设计》第一章，了解神经元的基本组成结构：  1权值、偏置、净输入、传输函数  了解了单输入神经元、多输入神经元，各种传输函数以及神经元层的概念，了解了一种离散时间递归网络的结构，以及与之相关的延时模块和积分器模块。  三种网络： 1231. 前馈网络（这里以感知机为代表）2. 竞争网络（这里以Hamming网络为代表）3. 递归联想存储网络（这里以Hopfield网络为代表">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-07T13:37:17.577Z">
+<meta property="og:updated_time" content="2018-03-09T12:18:02.818Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="神经网络学习">
 <meta name="twitter:description" content="初识神经网络 《神经网络设计》第一章，了解神经元的基本组成结构：  1权值、偏置、净输入、传输函数  了解了单输入神经元、多输入神经元，各种传输函数以及神经元层的概念，了解了一种离散时间递归网络的结构，以及与之相关的延时模块和积分器模块。  三种网络： 1231. 前馈网络（这里以感知机为代表）2. 竞争网络（这里以Hamming网络为代表）3. 递归联想存储网络（这里以Hopfield网络为代表">
@@ -126,7 +126,7 @@
 
 
 
-  <title>神经网络学习 | 我的博客</title>
+  <title>神经网络学习 | 我的博客</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -145,7 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -207,6 +207,16 @@
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
           </a>
         </li>
       
@@ -331,8 +341,10 @@
 </ol>
 <h1 id="简单介绍三种网络"><a href="#简单介绍三种网络" class="headerlink" title="简单介绍三种网络"></a>简单介绍三种网络</h1><h2 id="感知机"><a href="#感知机" class="headerlink" title="感知机"></a>感知机</h2><p>单层感知机的关键特性是它构造了一个线性判定便捷对输入向量进行分类。权值向量与判定边界垂直。</p>
 <h2 id="Hamming网络"><a href="#Hamming网络" class="headerlink" title="Hamming网络"></a>Hamming网络</h2><p>Hamming网络的目标是判定哪个标准向量更接近于输入向量，使用标准向量与输入向量的内积来对两者之间的联系进行量化，然后进行竞争，最后产生唯一一个非零的值，即最接近的。竞争机制为各自减去其他标准向量的一定比例，比例是一样的，这样大的值减掉的量小一些，小的值减去的量大一些，最终差距不断扩大，产生获胜者。</p>
-<p>Hamming网络分为两层：前馈层和递归层（竞争层）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1. 前馈层：前馈层的输出等于输入和每个标准模式的内积加R（R为输入向量中元素的个数）。对于两个等长向量而言，内积在两个向量指向同方向时最大，指向同方向时最小（量化标准模式与输入的联系），内积加上R时为了保证前馈层输出不会都是负数值。$x^&#123;y^z&#125;=(1+&#123;\rm e&#125;^x)^&#123;-2xy^w&#125;$</span><br></pre></td></tr></table></figure></p>
-<p>## </p>
+<p>Hamming网络分为两层：前馈层和递归层（竞争层）</p>
+<ul>
+<li>前馈层：前馈层的输出等于输入和每个标准模式的内积加R（R为输入向量中元素的个数）。对于两个等长向量而言，内积在两个向量指向同方向时最大，指向同方向时最小（量化标准模式与输入的联系），内积加上R时为了保证前馈层输出不会都是负数值。</li>
+</ul>
 <h1 id="明日计划"><a href="#明日计划" class="headerlink" title="明日计划"></a>明日计划</h1><h2 id="上午"><a href="#上午" class="headerlink" title="上午"></a>上午</h2><ol>
 <li>《神经网络设计》第3章看完</li>
 <li>《神经网络设计》第4章看完</li>
@@ -480,7 +492,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -490,6 +502,16 @@
 
           
 
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zaoerck" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
           
 
           
@@ -537,7 +559,7 @@
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">zaoerck</span>
+  <span class="author" itemprop="copyrightHolder">true</span>
 
   
 </div>
@@ -667,7 +689,7 @@
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
 
