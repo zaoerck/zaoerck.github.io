@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="我的博客">
 <meta property="og:description" content="初识神经网络 《神经网络设计》第一章，了解神经元的基本组成结构：  1权值、偏置、净输入、传输函数  了解了单输入神经元、多输入神经元，各种传输函数以及神经元层的概念，了解了一种离散时间递归网络的结构，以及与之相关的延时模块和积分器模块。  三种网络： 1231. 前馈网络（这里以感知机为代表）2. 竞争网络（这里以Hamming网络为代表）3. 递归联想存储网络（这里以Hopfield网络为代表">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-09T13:37:19.392Z">
+<meta property="og:updated_time" content="2018-03-10T10:55:04.821Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="神经网络学习">
 <meta name="twitter:description" content="初识神经网络 《神经网络设计》第一章，了解神经元的基本组成结构：  1权值、偏置、净输入、传输函数  了解了单输入神经元、多输入神经元，各种传输函数以及神经元层的概念，了解了一种离散时间递归网络的结构，以及与之相关的延时模块和积分器模块。  三种网络： 1231. 前馈网络（这里以感知机为代表）2. 竞争网络（这里以Hamming网络为代表）3. 递归联想存储网络（这里以Hopfield网络为代表">
@@ -348,9 +348,14 @@
 </ul>
 <h2 id="Hopfiled网络"><a href="#Hopfiled网络" class="headerlink" title="Hopfiled网络"></a>Hopfiled网络</h2><p>Hopfiled网络最终生成一个标准模式作为其输出。</p>
 <h1 id="感知机学习规则"><a href="#感知机学习规则" class="headerlink" title="感知机学习规则"></a>感知机学习规则</h1><h2 id="学习规则"><a href="#学习规则" class="headerlink" title="学习规则"></a>学习规则</h2><p>学习规则就是修改神经网络的权值和偏置值得方法和过程（即训练）。现有的神经网络学习规则大致可以分为三大类：有监督学习、无监督学习和增强学习（现在还有半监督学习）。</p>
+<p>规则如下：</p>
+<blockquote><br>W <sup>new</sup> = W <sup>old</sup> + ep<sup>T</sup><br><br>b <sup>new</sup> = b<sup>old</sup> + e ， (其中e=t-a，表示感知机误差)<br></blockquote>
+
+<h3 id="收敛性"><a href="#收敛性" class="headerlink" title="收敛性"></a>收敛性</h3><p>经证明，只要问题解存在，感知机学习规则能在有限次迭代收敛到实现期望分类的权值上。</p>
+<h3 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h3><p>单层感知机只能对线性可分的向量进行分类。</p>
 <h1 id="明日计划"><a href="#明日计划" class="headerlink" title="明日计划"></a>明日计划</h1><h2 id="上午"><a href="#上午" class="headerlink" title="上午"></a>上午</h2><ol>
 <li><del>《神经网络设计》第3章看完</del></li>
-<li>《神经网络设计》第4章看完</li>
+<li><del>《神经网络设计》第4章看完</del></li>
 </ol>
 <h2 id="下午"><a href="#下午" class="headerlink" title="下午"></a>下午</h2><ol>
 <li>菜鸟教程Python3 基本数据类型</li>
@@ -538,7 +543,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#初识神经网络"><span class="nav-number">1.</span> <span class="nav-text">初识神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单介绍三种网络"><span class="nav-number">2.</span> <span class="nav-text">简单介绍三种网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#感知机"><span class="nav-number">2.1.</span> <span class="nav-text">感知机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hamming网络"><span class="nav-number">2.2.</span> <span class="nav-text">Hamming网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hopfiled网络"><span class="nav-number">2.3.</span> <span class="nav-text">Hopfiled网络</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#感知机学习规则"><span class="nav-number">3.</span> <span class="nav-text">感知机学习规则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#学习规则"><span class="nav-number">3.1.</span> <span class="nav-text">学习规则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#明日计划"><span class="nav-number">4.</span> <span class="nav-text">明日计划</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#上午"><span class="nav-number">4.1.</span> <span class="nav-text">上午</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下午"><span class="nav-number">4.2.</span> <span class="nav-text">下午</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#晚上"><span class="nav-number">4.3.</span> <span class="nav-text">晚上</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#初识神经网络"><span class="nav-number">1.</span> <span class="nav-text">初识神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单介绍三种网络"><span class="nav-number">2.</span> <span class="nav-text">简单介绍三种网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#感知机"><span class="nav-number">2.1.</span> <span class="nav-text">感知机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hamming网络"><span class="nav-number">2.2.</span> <span class="nav-text">Hamming网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hopfiled网络"><span class="nav-number">2.3.</span> <span class="nav-text">Hopfiled网络</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#感知机学习规则"><span class="nav-number">3.</span> <span class="nav-text">感知机学习规则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#学习规则"><span class="nav-number">3.1.</span> <span class="nav-text">学习规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#收敛性"><span class="nav-number">3.1.1.</span> <span class="nav-text">收敛性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#局限性"><span class="nav-number">3.1.2.</span> <span class="nav-text">局限性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#明日计划"><span class="nav-number">4.</span> <span class="nav-text">明日计划</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#上午"><span class="nav-number">4.1.</span> <span class="nav-text">上午</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下午"><span class="nav-number">4.2.</span> <span class="nav-text">下午</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#晚上"><span class="nav-number">4.3.</span> <span class="nav-text">晚上</span></a></li></ol></li></ol></div>
             
 
           </div>
