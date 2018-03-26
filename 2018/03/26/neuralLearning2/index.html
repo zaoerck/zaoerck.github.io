@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="经典损失函数$$\sum_{i=1}^n a_i=0$$">
+<meta name="description" content="神经网络模型的效果以及优化的目标是通过损失函数来定义的。 经典损失函数通过神经网络解决多分类问题最常用的方法是设置n个输出节点，其中n为类别的个数。对于每一个样例，神经网络可以得到一个n维数组作为输出结果。数组中每一个维度（也就是每一个节点）对应一个类别。在理想情况下，如果一个样本术语类别k，那么这个类别所对应的输出节点的输出值应该为1，而其他节点的输出都为0.以识别数字1为例，神经网络模型的输出">
 <meta name="keywords" content="神经网络">
 <meta property="og:type" content="article">
 <meta property="og:title" content="神经网络优化之损失函数">
 <meta property="og:url" content="http://yoursite.com/2018/03/26/neuralLearning2/index.html">
 <meta property="og:site_name" content="我的博客">
-<meta property="og:description" content="经典损失函数$$\sum_{i=1}^n a_i=0$$">
+<meta property="og:description" content="神经网络模型的效果以及优化的目标是通过损失函数来定义的。 经典损失函数通过神经网络解决多分类问题最常用的方法是设置n个输出节点，其中n为类别的个数。对于每一个样例，神经网络可以得到一个n维数组作为输出结果。数组中每一个维度（也就是每一个节点）对应一个类别。在理想情况下，如果一个样本术语类别k，那么这个类别所对应的输出节点的输出值应该为1，而其他节点的输出都为0.以识别数字1为例，神经网络模型的输出">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-26T09:43:58.748Z">
+<meta property="og:updated_time" content="2018-03-26T14:21:05.909Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="神经网络优化之损失函数">
-<meta name="twitter:description" content="经典损失函数$$\sum_{i=1}^n a_i=0$$">
+<meta name="twitter:description" content="神经网络模型的效果以及优化的目标是通过损失函数来定义的。 经典损失函数通过神经网络解决多分类问题最常用的方法是设置n个输出节点，其中n为类别的个数。对于每一个样例，神经网络可以得到一个n维数组作为输出结果。数组中每一个维度（也就是每一个节点）对应一个类别。在理想情况下，如果一个样本术语类别k，那么这个类别所对应的输出节点的输出值应该为1，而其他节点的输出都为0.以识别数字1为例，神经网络模型的输出">
 
 
 
@@ -352,7 +352,12 @@
       
 
       
-        <h1 id="经典损失函数"><a href="#经典损失函数" class="headerlink" title="经典损失函数"></a>经典损失函数</h1><p>$$\sum_{i=1}^n a_i=0$$</p>
+        <p>神经网络模型的效果以及优化的目标是通过损失函数来定义的。</p>
+<h1 id="经典损失函数"><a href="#经典损失函数" class="headerlink" title="经典损失函数"></a>经典损失函数</h1><p>通过神经网络解决多分类问题最常用的方法是设置n个输出节点，其中n为类别的个数。对于每一个样例，神经网络可以得到一个n维数组作为输出结果。数组中每一个维度（也就是每一个节点）对应一个类别。在理想情况下，如果一个样本术语类别k，那么这个类别所对应的输出节点的输出值应该为1，而其他节点的输出都为0.以识别数字1为例，神经网络模型的输出结果越接近<code>[0,1,0,0,0,0,0,0,0,0]</code>越好。那么如何判断一个输出向量和期望的向量有多接近呢？</p>
+<h2 id="交叉熵"><a href="#交叉熵" class="headerlink" title="交叉熵"></a>交叉熵</h2><p>交叉熵刻画了两个概率分布之间的距离，它是分类问题中使用比较广泛的一种损失函数。<br>给定两个概率分布p和q，通过q来标识p的交叉熵为：<br>$$H(p,q)=-\sum_{x} p(x)log\;q(x)$$<br>注意交叉熵刻画的是两个概率分布之间的距离，然而神经网络的输出却不一定是一个概率分布。概率分布刻画了不同时间发生的概率。当时间总是有限的情况下，概率分布函数P(X=x)满足：<br>$$\forall x\; p(X=x) \in[0,1]且\sum_{x}p(X=x)=1$$<br>也就是说，任意事件发生的概率在0到1之间，且中有某个事件发生（概率和为1）。如果将分类问题中的“一个样例术语某一个类别”看成一个概率事件，那么训练数据的正确答案就符合一个概率分布。因为事件“一个样例属于不正确的类别”概率为0，而“一个样例术语正确的类别”的概率为1。可以使用Softmax回归将神经网络前向传播得到的结果变成概率分布。</p>
+<h3 id="Softmax回归"><a href="#Softmax回归" class="headerlink" title="Softmax回归"></a>Softmax回归</h3><p>Softmax回归本身可以作为一个学习算法来优化分类结果，但在TensorFlow中，Softmax回归的参数被去掉了，它只是一层额外的处理层，将神经网络的输出变成一个概率分布。<br>假设神经网络原始输出为$y_1$,$y_2$,$y_3$,…$y_n$，那么经过Softmax回归处理后的输出为：<br>$$ softmax(y)_ {i}=y_ {i}^{‘}=\frac{e^{y_{i}}}{\sum_{j=1}^{n}e^{y_{j}}} $$<br>从以上公式可以看出，原始神经网络输出被用作置信度来生成新的输出，而新的输出满足概率分布的所有要求。<strong>这个新的输出可以理解为经过神经网络的推导，一个样例为不同类别的概率分布为多大</strong>，这样就把神经网络的输出也变成了一个概率分布，从而可以通过交叉熵来计算预测的概率分布和真是答案的概率分布之间的距离了。</p>
+<p>假设某个样例的正确答案为(1,0,0)。某模型经过Softmax回归后的预测答案是$Y_1$=(0.5,0.4,0.1),$Y_2$=(0.8,0.1,0.1)，它们的交叉熵分别为：<br>$$ H_{1}((1,0,0),(0.5,0.4,0.1))=-(1 \times log\;0.5 + 0 \times log\;0.4 + 0 \times log\;0.1) \approx 0.3$$</p>
+<p>$$ H_{2}((1,0,0),(0.8,0.1,0.1))=-(1 \times log\;0.8 + 0 \times log\;0.1 + 0 \times log\;0.1) \approx 0.1$$<br>从直观上可以看到第二个预测答案要优于第一个，交叉熵计算的结果是一致的。</p>
 
       
     </div>
@@ -537,7 +542,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#经典损失函数"><span class="nav-number">1.</span> <span class="nav-text">经典损失函数</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#经典损失函数"><span class="nav-number">1.</span> <span class="nav-text">经典损失函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#交叉熵"><span class="nav-number">1.1.</span> <span class="nav-text">交叉熵</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Softmax回归"><span class="nav-number">1.1.1.</span> <span class="nav-text">Softmax回归</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
