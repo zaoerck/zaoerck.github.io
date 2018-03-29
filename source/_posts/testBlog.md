@@ -80,6 +80,10 @@ git commit -m "XX"
 git push origin hexo
 hexo d -g
 ```
+
+# 测试
+这句话是在终端B上编写上传的。
+
 # 其他问题
 在[搭建hexo博客并简单的实现多终端同步](https://righere.github.io/2016/10/10/install-hexo/)中提到了使用github将next的主题文件进行了更新，使用hexo g生成静态网页，然后hexo s本地调试成功，也没什么问题，当我hexo d发布到远程仓库的之后，在线浏览的时候发现一片空白，这时候使用其他主题都没问题。
 虽然目前没遇到，在这里做一下记录，解决办法如下：
