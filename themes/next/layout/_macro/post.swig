@@ -341,7 +341,7 @@
     {% endif %}
 
     {% if not is_index %}  
-      div>
+      <div>
         {% include 'passage-end-tag.swig' %}
       </div>
     {% endif %}
