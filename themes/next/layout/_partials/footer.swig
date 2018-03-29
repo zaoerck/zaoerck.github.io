@@ -7,7 +7,7 @@
   <span class="with-love">
     <i class="fa fa-{{ theme.footer.icon }}"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">zaoerck{{config.author }}</span>
+  <span class="author" itemprop="copyrightHolder">{{config.author }}</span>
 
   {% if theme.post_wordcount.totalcount %}
     <span class="post-meta-divider">|</span>
@@ -39,6 +39,7 @@
     本站总访问量<span id="busuanzi_value_site_pv"></span>次
     </span>
   </div>
+  <br>
 
   <div class="powered-by">{#
   #}{{ __('footer.powered', '<a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a>') }}{#
