@@ -7,7 +7,7 @@
   <span class="with-love">
     <i class="fa fa-{{ theme.footer.icon }}"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">{{ theme.footer.copyright || config.author }}</span>
+  <span class="author" itemprop="copyrightHolder">zaoerck{{config.author }}</span>
 
   {% if theme.post_wordcount.totalcount %}
     <span class="post-meta-divider">|</span>
@@ -30,6 +30,10 @@
     <span id="busuanzi_container_site_uv">
       本站访客数:<span id="busuanzi_value_site_uv"></span>人
     </span>
+    
+    {% if theme.footer.powered and theme.footer.theme.enable %}
+      <span class="post-meta-divider">|</span>
+    {% endif %}
 
     <span id="busuanzi_container_site_pv">
     本站总访问量<span id="busuanzi_value_site_pv"></span>次
