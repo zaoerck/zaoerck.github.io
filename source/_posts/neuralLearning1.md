@@ -48,25 +48,3 @@ b <sup>new</sup> = b<sup>old</sup> + e ， (其中e=t-a，表示感知机误差)
 
 ### 局限性
 单层感知机只能对线性可分的向量进行分类。
-
-# 明日计划runoob
-## 上午
-1. ~~《神经网络设计》第3章看完~~
-2. ~~《神经网络设计》第4章看完~~
-
-## 下午
-
-[学习Python](http://www.runoob.com/python3/python3-tutorial.html)
-
-1. ~~菜鸟教程Python3基本语法~~ 
-2. ~~菜鸟教程Python3 基本数据类型~~
-2. ~~菜鸟教程Python3 解释器~~
-3. ~~菜鸟教程Python3 注释~~
-4. ~~菜鸟教程Python3 运算符~~
-5. ~~菜鸟教程Python3 数字~~
-6. ~~菜鸟教程Python3字符串~~
-7. ~~看完《TensorFlow：实战Google深度学习框架》第3章~~
-
-## 晚上
-1. 查找相关RNN、LSTM优化论文
-2. 看吴恩达视频
