@@ -50,4 +50,39 @@ for(int i = 0; i < N; i++)
         }
     }
 ```
+
+# 典型静态方法实现
+1. 判断是否为素数
+```java
+//这不就是遍历嘛。
+public static boolean isPrime(int N) {
+    if (N < 2) return false;
+    for (int i = 2; i*i <= N; i++) {
+        if(N % i == 0) return false;
+    }
+    return true;
+}
+```
+2. 牛顿迭代法求平方根
+
+    牛顿迭代法求函数f(x)=0近似解思想：
+    + f(x)=0的解也就是f(x)与x轴交点
+    + 任选$x_0$，f(x)横坐标为0的点为：($x_0$,f($x_0$)),这一点的切线斜率为：f$^{'}$($x_0$)
+    + 切线与x轴交点$x_1$=$x_0$-$\frac{f(x_0)}{f^{'}(x_0)}$
+    + 依次计算$x_2$,$x_3$...$x_n$就可以逼近f(x)=0的解
+    
+    求平方根时f(x) = x$^{2}$-a, f$^{'}$(x)=2x，则：
+    $$x_{n+1} = x_{n} - \frac{x_{n}^{2}-a}{2x_n}=\frac{1}{2}(x_n+\frac{a}{x_n})$$
+
+    若$x_n$为解，则$x_{n}=\frac{a}{x_n}$，但实际上只能无限逼近，因此可以用$\left|x_{n}-\frac{a}{x_n}\right|$来表示误差。
+```java
+public static double sqrt(double C){
+    if (c < 0) return Double.NaN;
+    double err = 1e-15;
+    double t = c;
+    while(Math.abs(t - c/t) > err * t){
+        t = (c / t + t) / 2.0; 
+    }
+    return t;
+}
     
