@@ -7,5 +7,6 @@ categories:
 - 站点维护
 ---
 博客里面不放图片，有些东西会很麻烦，网上找了下Hexo使用图片的教程，这里测试一下
+![索隆](testImage/Test.jpg)
 
-![索隆](testImage/Zoro.jpg)
+
