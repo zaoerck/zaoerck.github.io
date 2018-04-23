@@ -9,19 +9,26 @@ categories:
 - 编程学习
 - Java
 ---
-异常：运行期出现的错误
+# Java标准异常
+Throwable这个Java类被用来表示任何可以作为异常被抛出的类。Throwable对象可以分为两种类型：
+1. Error：用来表示编译时和系统错误（除特殊情况外，一般不需要你关心）
+2. Exception：可以被抛出的基本类型。
+
+## 特例：RuntimeException
+RuntimeException将被自动捕获，不需要自己手动捕获，但还是可以在代码中抛出RuntimeException。
+
 先捕获小的异常再捕获大的异常
 重写方法需要抛出与原方法所抛出的异常类型一致异常或者不抛。
 
-# 捕获异常
-## try块
+## 捕获异常
+### try块
 如果在方法内部抛出异常（或者方法内部调用其他方法时抛出异常），方法会在抛出异常的过程中停止。如果不希望方法就此结束，可以在方法内部捕获异常。
 ```java
 try{
     // Code that might generate exceptions
 }
 ```
-## 异常处理
+### 异常处理
 抛出的异常需要被处理，异常处理程序紧跟在try块后，以关键字catch表示：
 ```java
 try {
@@ -32,6 +39,22 @@ try {
     // Handle exceptions of Type2
 } catch(Type3 id3) {
     // Handle exceptions of Type3
+}
+```
+
+### 使用finally清理
+对于一些代码，可能会希望无论try块中的异常是否抛出，它们都能得到执行。这通常适用于内存回收之外的情况（因为内存回收由垃圾回收器完成）。为了达到这个效果，需要时用finally语句。
+```java
+try {
+	//That might throw A, B, or C
+} catch(A a1) {
+	//Handler for situation A
+} catch(B b1) {
+	//Handler for situation B
+} catch(C c1) {
+	//Handler for situation C
+} finally {
+	//Activities that happen every time
 }
 ```
 ## 异常信息打印
@@ -111,7 +134,7 @@ exceptions.WhoCalled.h(WhoCalled.java:18)
 exceptions.WhoCalled.main(WhoCalled.java:25)
 
 ```
-### 重新抛出异常
+## 重新抛出异常
 有可能单个catch不能完全处理一个异常，此时在进行了一些处理之后，需要将异常重新抛出，由上一级环境中的异常处理程序进行处理。
 ```java
 package exceptions;
@@ -186,17 +209,29 @@ java.lang.Exception: thrown form f()
 
 ```
 
-### 异常链
+## 异常链
 在捕获一个异常后抛出另一个异常，并且希望把原始异常的信息保存下来，这就是异常链。
 
 Throwable的子类在构造器中可以接受一个cause对象作为参数，这个cause就用来表示原始异常，这样就可以把原始异常传递给新的异常，使得即使在当前位置创建并抛出了新的异常，也能通过这个异常链追踪到异常最初发生的位置。
+在Throwable子类中，只有三种基本的异常类提供了带cause参数的构造器：Error、Exception、RuntimeException。如果要把其他异常链链接起来，要使用initCause()方法而不是构造器。
+
+1. Error(Throwable cause)
+	
+	Constructs a new error with the specified cause and a detail message of (cause==null ? null : cause.toString()) (which typically contains the class and detail message of cause).
+1. Exception(Throwable cause)
+
+	Constructs a new exception with the specified cause and a detail message of (cause==null ? null : cause.toString()) (which typically contains the class and detail message of cause).
+1. RuntimeException(Throwable cause)
+	Constructs a new runtime exception with the specified cause and a detail message of (cause==null ? null : cause.toString()) (which typically contains the class and detail message of cause).
+
+
 ```java
-//待修改
 try {
-            g();
-        } catch (MyException1 e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-                        //这里做了修改
-            throw new MyException2(e);
+    g();
+} catch (MyException1 e) {
+// TODO Auto-generated catch block
+    e.printStackTrace();
+    //这里做了修改
+    throw new MyException2(e);
+}
 ```
