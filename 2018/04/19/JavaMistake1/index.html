@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="我的博客">
 <meta property="og:description" content="看视频和书籍学习理论的时候，难免会有疏忽，或者自以为学明白了，其实有些地方不清楚甚至理解错误，通过做一些笔试题，能够明白自己的不足，也能加深印象，在此记录下来。 继承相关 子类父类代码执行先后顺序如下：  父类静态代码块 子类静态代码块 父类非静态代码块 父类构造器 子类非静态代码块 子类构造器 当实例化子类对象时，首先要加载父类class文件，静态代码块是随着类的创建而执行的，所以父类静态代码块">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-19T02:54:59.304Z">
+<meta property="og:updated_time" content="2018-05-09T08:18:09.851Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java错题记录（一）">
 <meta name="twitter:description" content="看视频和书籍学习理论的时候，难免会有疏忽，或者自以为学明白了，其实有些地方不清楚甚至理解错误，通过做一些笔试题，能够明白自己的不足，也能加深印象，在此记录下来。 继承相关 子类父类代码执行先后顺序如下：  父类静态代码块 子类静态代码块 父类非静态代码块 父类构造器 子类非静态代码块 子类构造器 当实例化子类对象时，首先要加载父类class文件，静态代码块是随着类的创建而执行的，所以父类静态代码块">
@@ -380,7 +380,13 @@
 </ol>
 <h1 id="基本语法相关"><a href="#基本语法相关" class="headerlink" title="基本语法相关"></a>基本语法相关</h1><ol>
 <li><p>i++执行时，先使用i参与计算，然后i再自加。虽然知道其含义，但是碰到return i++;时，总以为返回的是i自加后的值，但其实是i的值，返回后i才自加。</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">i = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">return</span> i++;<span class="comment">//返回值为0</span></span><br></pre></td></tr></table></figure></li>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">i = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">return</span> i++;<span class="comment">//返回值为0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>静态变量只能在类主体中定义，不能在方法中定义。 静态变量属于类所有而不属于方法。</p>
+</li>
+</ol>
+<h1 id="内存相关"><a href="#内存相关" class="headerlink" title="内存相关"></a>内存相关</h1><ol>
+<li>成员变量随着对象的创建而创建，因此存在于对象所在的堆内存；局部变量保存再栈内存。</li>
 </ol>
 
       
@@ -576,7 +582,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#继承相关"><span class="nav-number">1.</span> <span class="nav-text">继承相关</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基本语法相关"><span class="nav-number">2.</span> <span class="nav-text">基本语法相关</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#继承相关"><span class="nav-number">1.</span> <span class="nav-text">继承相关</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基本语法相关"><span class="nav-number">2.</span> <span class="nav-text">基本语法相关</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存相关"><span class="nav-number">3.</span> <span class="nav-text">内存相关</span></a></li></ol></div>
             
 
           </div>
