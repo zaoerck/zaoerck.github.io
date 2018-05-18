@@ -1,5 +1,5 @@
 ---
-title: learningMySQL
+title: 数据库初步之MySQL基本
 date: 2018-05-15 09:56:19
 tags:
 - MySQL
