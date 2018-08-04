@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="我的博客">
 <meta property="og:description" content="Java标准异常Throwable这个Java类被用来表示任何可以作为异常被抛出的类。Throwable对象可以分为两种类型：  Error：用来表示编译时和系统错误（除特殊情况外，一般不需要你关心） Exception：可以被抛出的基本类型。  特例：RuntimeExceptionRuntimeException将被自动捕获，不需要自己手动捕获，但还是可以在代码中抛出RuntimeExcept">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-20T11:53:52.447Z">
+<meta property="og:updated_time" content="2018-05-28T12:31:38.591Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="重拾Java（二）异常处理">
 <meta name="twitter:description" content="Java标准异常Throwable这个Java类被用来表示任何可以作为异常被抛出的类。Throwable对象可以分为两种类型：  Error：用来表示编译时和系统错误（除特殊情况外，一般不需要你关心） Exception：可以被抛出的基本类型。  特例：RuntimeExceptionRuntimeException将被自动捕获，不需要自己手动捕获，但还是可以在代码中抛出RuntimeExcept">
@@ -373,6 +373,7 @@
 <h2 id="捕获异常"><a href="#捕获异常" class="headerlink" title="捕获异常"></a>捕获异常</h2><h3 id="try块"><a href="#try块" class="headerlink" title="try块"></a>try块</h3><p>如果在方法内部抛出异常（或者方法内部调用其他方法时抛出异常），方法会在抛出异常的过程中停止。如果不希望方法就此结束，可以在方法内部捕获异常。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="comment">// Code that might generate exceptions</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h3 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h3><p>抛出的异常需要被处理，异常处理程序紧跟在try块后，以关键字catch表示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// Code that might generate exceptions</span></span><br><span class="line">&#125; <span class="keyword">catch</span>(Type1 id1) &#123;</span><br><span class="line">    <span class="comment">// Handle exceptions of Type1</span></span><br><span class="line">&#125; <span class="keyword">catch</span>(Type2 id2) &#123;</span><br><span class="line">    <span class="comment">// Handle exceptions of Type2</span></span><br><span class="line">&#125; <span class="keyword">catch</span>(Type3 id3) &#123;</span><br><span class="line">    <span class="comment">// Handle exceptions of Type3</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h3 id="使用finally清理"><a href="#使用finally清理" class="headerlink" title="使用finally清理"></a>使用finally清理</h3><p>对于一些代码，可能会希望无论try块中的异常是否抛出，它们都能得到执行。这通常适用于内存回收之外的情况（因为内存回收由垃圾回收器完成）。为了达到这个效果，需要时用finally语句。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	<span class="comment">//That might throw A, B, or C</span></span><br><span class="line">&#125; <span class="keyword">catch</span>(A a1) &#123;</span><br><span class="line">	<span class="comment">//Handler for situation A</span></span><br><span class="line">&#125; <span class="keyword">catch</span>(B b1) &#123;</span><br><span class="line">	<span class="comment">//Handler for situation B</span></span><br><span class="line">&#125; <span class="keyword">catch</span>(C c1) &#123;</span><br><span class="line">	<span class="comment">//Handler for situation C</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	<span class="comment">//Activities that happen every time</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当要把除内存之外的资源回复到它们的初识状态时，就要用到finally子句。这种需要清理的资源包括：已经打开的文件或网络连接，在屏幕上绘制的图形，甚至可以是外部世界的某个开关。</p>
 <h2 id="异常信息打印"><a href="#异常信息打印" class="headerlink" title="异常信息打印"></a>异常信息打印</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">getMessage</span><span class="params">()</span><span class="comment">//获取详细信息</span></span></span><br><span class="line"><span class="function">String <span class="title">getLocalizedMessage</span><span class="params">()</span><span class="comment">//用本地语言表示的详细信息</span></span></span><br><span class="line"><span class="function">String <span class="title">toString</span><span class="params">()</span><span class="comment">//返回对Throwable的简单描述，要是有详细信息的话，也会包含在内</span></span></span><br></pre></td></tr></table></figure>
 <h3 id="栈轨迹"><a href="#栈轨迹" class="headerlink" title="栈轨迹"></a>栈轨迹</h3><ul>
 <li>void printStackTrace()</li>
@@ -531,7 +532,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -553,7 +554,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
