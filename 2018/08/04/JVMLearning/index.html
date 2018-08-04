@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="我的博客">
 <meta property="og:description" content="概述与那些在编译时需要进行连接工作的语言不同，在Java语言里面，类型的加载、连接和初始化的过程都是在程序运行期间完成的。 类加载的时机类从被加载到虚拟机内存中开始，到卸载出内存为止，它的整个生命周期包括：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）和卸载（Unlo">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-04T08:24:11.621Z">
+<meta property="og:updated_time" content="2018-08-04T12:50:53.105Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM学习（一）虚拟机类加载机制">
 <meta name="twitter:description" content="概述与那些在编译时需要进行连接工作的语言不同，在Java语言里面，类型的加载、连接和初始化的过程都是在程序运行期间完成的。 类加载的时机类从被加载到虚拟机内存中开始，到卸载出内存为止，它的整个生命周期包括：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）和卸载（Unlo">
@@ -396,10 +396,12 @@
 <li>……</li>
 </ul>
 <p>数组类本身不通过类加载器创建，它是由Java虚拟机直接创建的。但是数组类和类加载器仍然有很密切的联系，因为数组类的元素类型（Element Type，指的是数组去掉所有维度的类型）最终要靠类加载器去创建，一个数组类（下面简称为C）创建过程如下:</p>
-<pre><code>1. 如果数组的组件类型（Component Type，指的是数组去掉一个维度的类型）是引用类型，那就递归的采用本节中定义的加载过程去加载这个组件类型，数组C将在加载该组件类型的类加载器的类名称空间上被标识
-2. 如果数组的组件类型不是引用类型（例如int[]数组），Java虚拟机将会把数组C标记为与引导类加载器关联。
-3. 数组类的可见性与它的组件类型的可见性一致，如果组件类型不是引用类型，那数组的可见性将默认为public。
-</code></pre><h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>验证是连接阶段的第一步，这一阶段的目的是为了确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。验证阶段大致会完成下面4个阶段的检验动作：<strong>文件格式验证</strong>、<strong>元数据验证</strong>、<strong>字节码验证</strong>、<strong>符号引用验证</strong>。</p>
+<ol>
+<li>如果数组的组件类型（Component Type，指的是数组去掉一个维度的类型）是引用类型，那就递归的采用本节中定义的加载过程去加载这个组件类型，数组C将在加载该组件类型的类加载器的类名称空间上被标识</li>
+<li>如果数组的组件类型不是引用类型（例如int[]数组），Java虚拟机将会把数组C标记为与引导类加载器关联。</li>
+<li>数组类的可见性与它的组件类型的可见性一致，如果组件类型不是引用类型，那数组的可见性将默认为public。</li>
+</ol>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>验证是连接阶段的第一步，这一阶段的目的是为了确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。验证阶段大致会完成下面4个阶段的检验动作：<strong>文件格式验证</strong>、<strong>元数据验证</strong>、<strong>字节码验证</strong>、<strong>符号引用验证</strong>。</p>
 <h3 id="文件格式验证"><a href="#文件格式验证" class="headerlink" title="文件格式验证"></a>文件格式验证</h3><p>这一阶段主要验证字节流是否符合Class文件格式的规范，并且能被当前版本的虚拟机处理。这一阶段的验证可能包括下面这些验证点：</p>
 <ul>
 <li>是否以魔数0xCAFEBABE开头</li>
