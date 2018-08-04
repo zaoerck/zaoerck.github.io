@@ -57,6 +57,7 @@ try {
 	//Activities that happen every time
 }
 ```
+当要把除内存之外的资源回复到它们的初识状态时，就要用到finally子句。这种需要清理的资源包括：已经打开的文件或网络连接，在屏幕上绘制的图形，甚至可以是外部世界的某个开关。
 ## 异常信息打印
 ```java
 String getMessage()//获取详细信息
