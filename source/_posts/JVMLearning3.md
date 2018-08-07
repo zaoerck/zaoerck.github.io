@@ -1,5 +1,5 @@
 ---
-title: JVM学习（二）Java内存区域
+title: JVM学习（二）Java对象
 date: 2018-08-03 19:20:40
 tags: 
 - Java
