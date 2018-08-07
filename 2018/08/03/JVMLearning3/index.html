@@ -82,16 +82,16 @@
 <meta name="description" content="对象的创建Java程序中new一个普通对象需要经过5个步骤：  相应检查和类加载 分配内存 初始化零值 对象头设置 执行方法  相应检查和类加载虚拟机遇到一条new指令时，首先检查这个指令的参数是否能够在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，就必须先执行相应的类的加载过程。 分配内存对象所需内存的大小在类加载完成后便可以确定（JVM可以">
 <meta name="keywords" content="Java,编程,JVM">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM学习（二）Java内存区域">
+<meta property="og:title" content="JVM学习（二）Java对象">
 <meta property="og:url" content="http://yoursite.com/2018/08/03/JVMLearning3/index.html">
 <meta property="og:site_name" content="我的博客">
 <meta property="og:description" content="对象的创建Java程序中new一个普通对象需要经过5个步骤：  相应检查和类加载 分配内存 初始化零值 对象头设置 执行方法  相应检查和类加载虚拟机遇到一条new指令时，首先检查这个指令的参数是否能够在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，就必须先执行相应的类的加载过程。 分配内存对象所需内存的大小在类加载完成后便可以确定（JVM可以">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/2018/08/03/JVMLearning3/jubing.png">
 <meta property="og:image" content="http://yoursite.com/2018/08/03/JVMLearning3/zhijiezhizhen.png">
-<meta property="og:updated_time" content="2018-08-07T13:44:36.454Z">
+<meta property="og:updated_time" content="2018-08-07T13:48:10.885Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM学习（二）Java内存区域">
+<meta name="twitter:title" content="JVM学习（二）Java对象">
 <meta name="twitter:description" content="对象的创建Java程序中new一个普通对象需要经过5个步骤：  相应检查和类加载 分配内存 初始化零值 对象头设置 执行方法  相应检查和类加载虚拟机遇到一条new指令时，首先检查这个指令的参数是否能够在常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，就必须先执行相应的类的加载过程。 分配内存对象所需内存的大小在类加载完成后便可以确定（JVM可以">
 <meta name="twitter:image" content="http://yoursite.com/2018/08/03/JVMLearning3/jubing.png">
 
@@ -129,7 +129,7 @@
 
 
 
-  <title>JVM学习（二）Java内存区域 | 我的博客</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>JVM学习（二）Java对象 | 我的博客</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -283,7 +283,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">JVM学习（二）Java内存区域</h1>
+          <h1 class="post-title" itemprop="name headline">JVM学习（二）Java对象</h1>
         
 
         <div class="post-meta">
