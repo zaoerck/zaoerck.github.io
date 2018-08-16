@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,编程,JVM," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="线程安全为了更深入的理解线程安全，可以Java语言中的线程安全按照“安全程度”由强至弱来排序，可以将Java中各种操作共享的数据分为以下5类：  不可变 绝对线程安全 相对线程安全 线程兼容 线程对立  不可变在Java语言中（特指JDK1.5以后，即Java内存模型被修正之后的Java语言），不可变（Immutable）对象一定是线程安全的，无论是对象的方法实现还是方法的调用者，都不需要再采取任">
+<meta name="keywords" content="Java,编程,JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM学习（六）线程安全和锁优化">
+<meta property="og:url" content="http://yoursite.com/2018/08/15/JVMLearning6/index.html">
+<meta property="og:site_name" content="我的博客">
+<meta property="og:description" content="线程安全为了更深入的理解线程安全，可以Java语言中的线程安全按照“安全程度”由强至弱来排序，可以将Java中各种操作共享的数据分为以下5类：  不可变 绝对线程安全 相对线程安全 线程兼容 线程对立  不可变在Java语言中（特指JDK1.5以后，即Java内存模型被修正之后的Java语言），不可变（Immutable）对象一定是线程安全的，无论是对象的方法实现还是方法的调用者，都不需要再采取任">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2018/08/15/JVMLearning6/a.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/15/JVMLearning6/b.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/15/JVMLearning6/c.png">
+<meta property="og:updated_time" content="2018-08-16T09:18:30.967Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM学习（六）线程安全和锁优化">
+<meta name="twitter:description" content="线程安全为了更深入的理解线程安全，可以Java语言中的线程安全按照“安全程度”由强至弱来排序，可以将Java中各种操作共享的数据分为以下5类：  不可变 绝对线程安全 相对线程安全 线程兼容 线程对立  不可变在Java语言中（特指JDK1.5以后，即Java内存模型被修正之后的Java语言），不可变（Immutable）对象一定是线程安全的，无论是对象的方法实现还是方法的调用者，都不需要再采取任">
+<meta name="twitter:image" content="http://yoursite.com/2018/08/15/JVMLearning6/a.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/15/JVMLearning6/"/>
+
+
+
+
+
+  <title>JVM学习（六）线程安全和锁优化 | 我的博客</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">我的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/15/JVMLearning6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zaoerck">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM学习（六）线程安全和锁优化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-15T18:51:00+08:00">
+                2018-08-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程学习/" itemprop="url" rel="index">
+                    <span itemprop="name">编程学习</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程学习/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h1><p>为了更深入的理解线程安全，可以Java语言中的线程安全按照“安全程度”由强至弱来排序，可以将Java中各种操作共享的数据分为以下5类：</p>
+<ol>
+<li>不可变</li>
+<li>绝对线程安全</li>
+<li>相对线程安全</li>
+<li>线程兼容</li>
+<li>线程对立</li>
+</ol>
+<h2 id="不可变"><a href="#不可变" class="headerlink" title="不可变"></a>不可变</h2><p>在Java语言中（特指JDK1.5以后，即Java内存模型被修正之后的Java语言），不可变（Immutable）对象一定是线程安全的，无论是对象的方法实现还是方法的调用者，都不需要再采取任何的线程安全保障措施。只要一个不可变的对象被正确的构建出来，那其外部的可见状态永远不会改变。<strong>“不可变”带来的安全性是最简单和最纯粹的</strong>。</p>
+<ul>
+<li>针对基本数据类型，只要在定义时使用final关键字修饰就可以保证它是不可变的。</li>
+<li>针对对象，需要保证对象的行为不会对其状态产生任何影响才行。</li>
+</ul>
+<p>如java.lang.String就是一个不可变对象，调用它的substring()、replace()和concat()这些方法都不会影响原来的值，指挥返回新构造的字符串对象。</p>
+<p>保证对象行为不影响自己状态的途径有很多，其中最简单的方法就是把对象中带有状态的变量都声明为final，这样在构造函数结束后，它就是不可变的。如java.lang.Integer的构造函数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> value;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Integer</span><span class="params">(<span class="keyword">int</span> value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.value = value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Java API中符合不可变要求的类型，除了String之外，常见的还有枚举类型，以及java.lang.Number的部分子类，如Long和Double等数值包装类型，BigInteger和BigDecimal等大数据类型。</p>
+<h2 id="绝对线程安全"><a href="#绝对线程安全" class="headerlink" title="绝对线程安全"></a>绝对线程安全</h2><p>Brian Goetz给出的绝对线程安全的定义“不管运行时环境如何，调用者都不需要任何额外的同步措施”，这个定义是相当严格的。在Java API中标注自己是线程安全的类，大多数都不是绝对的线程安全。</p>
+<h2 id="相对线程安全"><a href="#相对线程安全" class="headerlink" title="相对线程安全"></a>相对线程安全</h2><p>相对的线程安全就是我们通常意义上所讲的线程安全，它需要保证对这个对象单独的操作时线程安全的，我们在调用的时候不需要做额外的保障措施，但是对于一些特定顺序的连续调用，就可能在调用端使用额外的同步手段来保证调用的正确性。</p>
+<p>在Java语言中，大部分的线程安全类都属于这种类型，例如Vector、HashTable、Collections的synchronizedCollection（）方法包装的集合等。</p>
+<h2 id="线程兼容"><a href="#线程兼容" class="headerlink" title="线程兼容"></a>线程兼容</h2><p>线程兼容是指对象本身并不是线程安全的，但是可以通过在调用端正确地使用同步手段来保证对象在并发环境中可以安全地使用，我们平常说一个类不是线程安全的，绝大多数时候指的是这一种情况。</p>
+<h2 id="线程对立"><a href="#线程对立" class="headerlink" title="线程对立"></a>线程对立</h2><p>线程对立是指无论调用端是否采取了同步措施，都无法再多线程环境中并发使用的代码。Java语言中，线程对立这种排斥多线程的代码很少出现，而且通常是有害的，应当尽量避免出现。</p>
+<p>如：Thread类的suspend()和resume()方法，如果两个线程同时持有一个对象，一个常识中断，另一个尝试恢复，如果并发进行的话，无论调用时是否进行了同步，目标线程都是存在死锁风险的。也正是由于这个原因suspend()和resume()方法已经被JDK声明废弃了。常见的线程对立操作还有System.setIn()、System.setOut()和System.runFinalizerOnExit()等。</p>
+<h1 id="实现线程安全"><a href="#实现线程安全" class="headerlink" title="实现线程安全"></a>实现线程安全</h1><p>如何实现线程安全与代码编写有很大的关系，但是虚拟机提供的同步和锁机制也起到了非常重要的作用。</p>
+<h2 id="互斥同步"><a href="#互斥同步" class="headerlink" title="互斥同步"></a>互斥同步</h2><p>互斥同步是一种常见的并发正确性保障手段。</p>
+<p><strong>同步</strong>是指在多个线程并发访问共享数据时，保证共享数据在同一时刻只被一个（或者是一些，使用信号量的时候）线程使用。</p>
+<p><strong>互斥</strong>是实现同步的一种手段，临界区、互斥量、信号量、都是主要的互斥实现手段。</p>
+<h3 id="synchronized关键字"><a href="#synchronized关键字" class="headerlink" title="synchronized关键字"></a>synchronized关键字</h3><p>最基本的互斥同步手段就是synchronized关键字。synchronized关键字经过编译之后，会在同步块的前后分别形成monitorenter和monitorexit这两个字节码指令，这两个字节码都需要一个reference类型的参数来知名要锁定和解锁的对象。</p>
+<ul>
+<li>如果synchronized知名了对象参数，则锁定和解锁的就是这个对象</li>
+<li>如果没有明确指定，那就根据synchronized修饰的是类方法还是实例方法，去取对应的Class对象或对象实例来作为锁对象。</li>
+</ul>
+<p>synchronized同步块对同一条线程来说是可重入的,不会出现自己把自己锁死的问题。其次同步块在已进入的进程执行完之前，会阻塞后面其他线程的进入。</p>
+<p>Java的线程是映射到操作系统的原生线程之上，如果要阻塞或唤醒一个线程，都需要操作系统来帮忙完成，这就需要从用户态转换到核心态中，因此状态转换耗费很多的处理器时间。所以synchronized是Java中的一个重量级操作。</p>
+<h3 id="重入锁ReentrantLock"><a href="#重入锁ReentrantLock" class="headerlink" title="重入锁ReentrantLock"></a>重入锁ReentrantLock</h3><p>除了synchronized之外，我们还可以使用java.util.concurrent（下文称J.U.C）。</p>
+<p>ReentrantLock与synchronized很相似，他们都具有可重入特性，只是代码写法上有点区别。一个表现为API层面的互斥锁（lock（）和unlock（）方法配合try/finally语块来完成），另一个表现为原生语法层面的互斥锁。</p>
+<p>ReentrantLock增加了一些高级特性：</p>
+<ol>
+<li><strong>等待可中断</strong>：等待可中断是指持有锁的线程长期不释放锁的时候，正在等待的线程可以选择放弃等待，改为处理其他事情，可中断特性对处理执行时间非常长的同步块很有帮助。</li>
+<li><strong>可实现公平锁</strong>：公平锁是指多个线程在等待同一个锁时，必须按照申请的时间顺序来依次获得锁；而非公平锁不保证这一点，在锁被释放的时候，任何一个等待锁的线程都有机会获得锁。synchronized锁时非公平的，ReentrantLock默认也是非公平的，但是可以通过带布尔变量的构造函数来要求使用公平锁。</li>
+<li><strong>锁可以绑定多个条件</strong>：一个ReentrantLock可以同时绑定多个Condition对象，而在synchronized中，锁对象的wait()和notify()或notifyAll()方法可以实现一个隐含的条件，如果要和多于一个条件关联的时候，就不得不额外的添加一个锁，而ReentrantLock不需要这样做，只需要多次调用newCondition()方法即可。</li>
+</ol>
+<p>在性能上，JDK1.6发布以后，synchronized和ReentrantLock性能基本上持平了，性能因素不再是选择ReentrantLock的理由了。</p>
+<h2 id="非阻塞同步"><a href="#非阻塞同步" class="headerlink" title="非阻塞同步"></a>非阻塞同步</h2><p>互斥同步最主要的问题就是进行线程阻塞和唤醒所带来的性能问题，因此这种同步也称为阻塞同步(Blocking Synchronization)。</p>
+<ol>
+<li><strong>悲观的并发策略</strong>：总是认为只要不去做正确的同步措施（如加锁），那就肯定会出问题，无论共享数据是否真的会出现竞争，它都要进行加锁。</li>
+<li><strong>乐观的并发策略</strong>：先进行操作，如果没有其他线程争用共享数据，那操作就成功了；如果共享数据有争用，产生了冲突，那就在采用其他的补偿措施（最常见的补偿措施就是不断的重试，知道成功为止）</li>
+</ol>
+<p>互斥同步属于悲观的并发策略，非阻塞同步是乐观的并发策略。</p>
+<h3 id="CAS操作"><a href="#CAS操作" class="headerlink" title="CAS操作"></a>CAS操作</h3><p>CAS指令需要有3个操作数，分别是内存位置地址（V）、旧的预期值A和新的值B。CAS指令执行时，当且仅当V符合旧预期值A时，处理器用新的值B更新V所指的内存，否则就不执行更新，但是无论是否更新了V的值，都会返回V的旧值。上述处理过程是一个原子操作。</p>
+<p>也就是说赋值之前检查这个变量是否还是原来的值，如果没有发生改变，则进行复制；如果发生改变，那就不进行赋值。</p>
+<h3 id="CAS的“ABA”问题"><a href="#CAS的“ABA”问题" class="headerlink" title="CAS的“ABA”问题"></a>CAS的“ABA”问题</h3><p>如果一个变量原来的值为A，在准备赋值的时候检查到它的值还是A，但是我们不能说它没有发生变化，因为它可能由A变成B，又变回了A，但是这样CAS会以为它没有被改变过。</p>
+<p><strong>解决办法</strong>：J.U.C包为了解决这个问题，提供了一个电邮标记的原子引用类“AtomicStampedReference”，它可以通过控制变量的版本来保证CAS的正确性。不过目前这个类比较“鸡肋”，大部分情况下ABA问题不会影响程序开发的正确性，如果需要解决ABA问题，改用传统的互斥同步可能会比原子类更高效。</p>
+<h2 id="无同步方案"><a href="#无同步方案" class="headerlink" title="无同步方案"></a>无同步方案</h2><p>要保证线程安全，并不是一定就要进行同步，两者没有因果关系。同步只是保证共享数据争用时的正确性的手段。如果一个方法本来就不涉及共享数据，那它自然就无须进行任何同步措施去保证正确性，因此会有一些代码天生就是线程安全的。比如下面两类</p>
+<p><strong>可重入代码</strong>：这种代码也叫纯代码（Pure Code），可以在代码执行的任何时刻而中断它，转而去执行另外一段代码，而在控制权返回后，原来的程序不会出现任何错误。</p>
+<p>可重入代码有一些共同的特征，例如不依赖存储在对上的数据和公用的系统资源、用到的状态量都是由参数中传入、不调用非可重用的方法等。我们可以用一个简单的原则来看代码是否具有可重入性：如果一个方法，它的返回结果是可以预测的，只要输入了相同的数据，就能返回相同的结果，那它就满足可重入性的要求，当然也是线程安全的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*这就是一个典型的可重入方法</span></span><br><span class="line"><span class="comment">*无论谁调用它，第几次调用，输出都是一样的</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    System.out.print(i);</span><br><span class="line">    i++;</span><br><span class="line">    System.out.print(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*这是一个非可重入的代码</span></span><br><span class="line"><span class="comment">*每次调用的结果不一样</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    System.out.print(i);</span><br><span class="line">    i++;</span><br><span class="line">    System.out.print(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>线程本地存储</strong>：<br>如果一段代码中所需要的数据必须与其他代码共享（也就是非可重入代码），那就看看这些共享数据能否保证在同一个线程中执行？如果能保证，就可以把共享数据的可见范围限制在同一个线程之内，这样，就无须同步也能保证线程之间不出现数据争用的问题。</p>
+<p>Java语言中，如果一个变量要被多个线程访问，就可以使用volatile关键字声明为“易变的”，如果一个变量要被某个线程独享，Java中可以通过java.lang.ThreadLocal类来实现线程本地存储的功能。</p>
+<h1 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h1><p>在JDK1.6上，HotSpot虚拟机开发团队在这个版本上花费了大量的经理去实现各种锁优化技术，如适应性自旋、锁消除、锁粗化、轻量级锁和偏向锁等，这些技术都是为了在线程之间更高效地共享数据，以及解决竞争问题，从而提高执行效率。</p>
+<h2 id="自旋锁和自适应自旋"><a href="#自旋锁和自适应自旋" class="headerlink" title="自旋锁和自适应自旋"></a>自旋锁和自适应自旋</h2><p>互斥同步中对性能最大的影响就是阻塞的实现，线程的挂起和恢复操作都需要转入内核态中完成。但是在许多应用上，共享数据的锁定状态指挥持续很短的时间，为了这很短的时间去对线程进行挂起和恢复并不值得。因此引入了自旋锁。</p>
+<p><strong>自旋锁</strong>：即希望在竞争产生时，并不是立即挂起，而是让线程执行一个忙循环（自旋），避免了线程状态的改变。</p>
+<p>可以使用-XX:+UseSpining参数来开启,在JDK1.6中是默认开启的，自旋次数是10次，可以使用参数-XX:PreBlockSpin来更改。</p>
+<p>自旋等待本身虽然避开了线程切换的开销，但它需要占用处理器的时间，如果锁被占用的时间段，自旋等待效果就比较好；如果时间长，反而会带来性能浪费。</p>
+<p><strong>自适应自旋</strong>：JDK1.6中引入了自适应的自旋锁。自适应以为这自旋的时间不再固定了，而是由前一次在同一个锁上的紫萱事件及锁的拥有者的状态来决定。</p>
+<p>如果在同一个所对象上，自旋等待刚刚成功获得过锁，且持有锁的对象还在运行中，这次自旋很可能再次成功，进而可以将自旋时间延长。如果对于某个锁，很少获得成功，那在以后获取这个锁的时候将可能忽略掉自选过程。</p>
+<h2 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h2><p>锁消除是指虚拟机即时编译器在运行时，对一些代码上要求同步，但是被检测到不可能存在共享数据竞争的锁进行消除。锁消除的主要判定依据来源于逃逸分析的数据支持。</p>
+<h2 id="锁粗化"><a href="#锁粗化" class="headerlink" title="锁粗化"></a>锁粗化</h2><p>如果一串连续的操作对同一对象加锁、解锁，那么虚拟机将会把锁的同步范围扩展（粗化）到整个操作序列的外部。</p>
+<h2 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h2><p>轻量级锁时JDK1.6加入的新型锁机制，传统的锁机制称为“重量级锁”。轻量级锁不是用来代替重量级锁的，它的本意是在没有多线程竞争的前提下，减少传统重量级锁使用操作系统互斥量产生的性能消耗。</p>
+<h3 id="关于对象头"><a href="#关于对象头" class="headerlink" title="关于对象头"></a>关于对象头</h3><p>HotSpot虚拟机对象头分为两个部分：</p>
+<ol>
+<li>第一部分 用于存储对象自身的运行时数据，如哈希码、GC分代年龄等，官方称作“Mark Word”</li>
+<li>第二部分 存储执行方法区对象类型的指针，如果是数组对象，还会有一个额外的部分用于存储数组长度。</li>
+</ol>
+<p>Mark Word被设计成一个非固定的数据结构，以便在极小的空间内存储尽量多的信息，它会根据对象的状态复用自己的存储空间。总长度在32位和64位虚拟机中分别为32位和64位。<br><img src="/2018/08/15/JVMLearning6/a.png" alt="对象头Mark Word"></p>
+<p>在代码进入同步块的时候，如果此同步的对象没有被锁定，虚拟机首先将在当前线程的栈帧中建立一个名为所记录的空间，用于存放对象目前Mark Word的拷贝（即Displaced Mark Word），这时线程堆栈与对象头的状态如图13-3所示。</p>
+<p>然后，虚拟机使用CAS操作尝试将对象的Mark Word更新为执行Lock Record的指针。如果成功，那么这个对象就拥有了这个对象锁，并且对象Mark Word的锁标志位转为“00”，表示对象处于轻量级锁定状态。<br><img src="/2018/08/15/JVMLearning6/b.png" alt="轻量级锁加锁过程"></p>
+<p>如果更新操作失败，虚拟机会检查对象的Mark Word是否指向当前线程的栈帧，如果指向，说明当前线程已经拥有了这个而对象的锁，那就可以直接进入同步块继续执行，否则说明这个对象已经被其他线程抢占了。</p>
+<p>如果有两条以上的线程争用同一个锁，那轻量级锁就会膨胀为重量级锁，锁标志位“10”，Mark Word中存储的就是指向重量级锁的指针，后面等待锁的线程也要进入阻塞状态。</p>
+<p>轻量级锁使用CAS操作避免了使用互斥量的开销，但如果存在锁竞争，除了互斥量的开销外，还额外发生了CAS操作，因此在有竞争的情况下，轻量锁会比传统的重量级锁更慢。</p>
+<h2 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h2><p>翩跹锁的目的是消除数据在无精症情况下的同步原语，进一步提高运行性能。如果说轻量级锁时在无精症的情况下，使用CAS操作去消除同步使用的互斥量，那么偏向锁就是在无竞争的情况下，将整个同步过程都消除了，连CAS操作都不需要了。</p>
+<p>当对象第一次被线程获取的时候，虚拟机将会把对象头中的标志位设为“01”，即偏向模式，同时使用CAS操作把获取到这个对象的线程ID记录在对象的Mark Word中，如果CAS操作成功，持有偏向锁的线程以后每次进入这个锁相关的同步块时，虚拟机可以不再进行任何同步操作。</p>
+<p>当有另外一个线程尝试获取这个锁时，偏向模式结束。根据锁对象目前是否处于被锁定状态，撤销偏向后恢复到未锁定状态或轻量级锁定状态。<br><img src="/2018/08/15/JVMLearning6/c.png" alt="偏向锁、轻量级锁的状态转换"></p>
+<h2 id="个人对偏向锁、轻量级锁、重量级锁理解"><a href="#个人对偏向锁、轻量级锁、重量级锁理解" class="headerlink" title="个人对偏向锁、轻量级锁、重量级锁理解"></a>个人对偏向锁、轻量级锁、重量级锁理解</h2><ol>
+<li>偏向锁：使用于没有竞争的情况，有一个线程经常来，偏向它，方便后续它来的时候，减少操作。</li>
+<li>轻量级锁：适用于多线程，但是没有竞争的情况，就是说，有多个线程，但是这一块他们是交替着来的。</li>
+<li>重量级锁：多线程，有竞争。</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+      
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          
+            <a href="/tags/编程/" rel="tag"><i class="fa fa-tag"></i> 编程</a>
+          
+            <a href="/tags/JVM/" rel="tag"><i class="fa fa-tag"></i> JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/13/JVMLearning5/" rel="next" title="JVM学习（五）Java内存模型">
+                <i class="fa fa-chevron-left"></i> JVM学习（五）Java内存模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">zaoerck</p>
+              <p class="site-description motion-element" itemprop="description">Just a normal guy</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zaoerck" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#线程安全"><span class="nav-number">1.</span> <span class="nav-text">线程安全</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#不可变"><span class="nav-number">1.1.</span> <span class="nav-text">不可变</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绝对线程安全"><span class="nav-number">1.2.</span> <span class="nav-text">绝对线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相对线程安全"><span class="nav-number">1.3.</span> <span class="nav-text">相对线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程兼容"><span class="nav-number">1.4.</span> <span class="nav-text">线程兼容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程对立"><span class="nav-number">1.5.</span> <span class="nav-text">线程对立</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现线程安全"><span class="nav-number">2.</span> <span class="nav-text">实现线程安全</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#互斥同步"><span class="nav-number">2.1.</span> <span class="nav-text">互斥同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized关键字"><span class="nav-number">2.1.1.</span> <span class="nav-text">synchronized关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重入锁ReentrantLock"><span class="nav-number">2.1.2.</span> <span class="nav-text">重入锁ReentrantLock</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非阻塞同步"><span class="nav-number">2.2.</span> <span class="nav-text">非阻塞同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CAS操作"><span class="nav-number">2.2.1.</span> <span class="nav-text">CAS操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CAS的“ABA”问题"><span class="nav-number">2.2.2.</span> <span class="nav-text">CAS的“ABA”问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无同步方案"><span class="nav-number">2.3.</span> <span class="nav-text">无同步方案</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#锁优化"><span class="nav-number">3.</span> <span class="nav-text">锁优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#自旋锁和自适应自旋"><span class="nav-number">3.1.</span> <span class="nav-text">自旋锁和自适应自旋</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁消除"><span class="nav-number">3.2.</span> <span class="nav-text">锁消除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁粗化"><span class="nav-number">3.3.</span> <span class="nav-text">锁粗化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#轻量级锁"><span class="nav-number">3.4.</span> <span class="nav-text">轻量级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于对象头"><span class="nav-number">3.4.1.</span> <span class="nav-text">关于对象头</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏向锁"><span class="nav-number">3.5.</span> <span class="nav-text">偏向锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#个人对偏向锁、轻量级锁、重量级锁理解"><span class="nav-number">3.6.</span> <span class="nav-text">个人对偏向锁、轻量级锁、重量级锁理解</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zaoerck</span>
+
+  
+</div>
+
+
+
+  <div class="powered-by">
+    <i class="fa fa-user-md"></i>
+    <span id="busuanzi_container_site_uv">
+      本站访客数:<span id="busuanzi_value_site_uv"></span>人
+    </span>
+    
+    
+      <span class="post-meta-divider">|</span>
+    
+
+    <span id="busuanzi_container_site_pv">
+    本站总访问量<span id="busuanzi_value_site_pv"></span>次
+    </span>
+  </div>
+  <br>
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
